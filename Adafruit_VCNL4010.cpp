@@ -42,6 +42,21 @@ boolean Adafruit_VCNL4010::begin(uint8_t addr) {
   write8(VCNL4010_INTCONTROL, 0x08);
   return true;
 }
+
+boolean Adafruit_VCNL4010::dataReadyInterruptEnabled(void) {
+  uint8_t result = read8(VCNL4010_INTCONTROL);
+  return (result >> 3) & 0x01;
+}
+
+
+boolean Adafruit_VCNL4010::enableDataReadyInterrupt(boolean enable) {
+  if (dataReadyInterruptEnabled())
+    return;
+}
+
+boolean Adafruit_VCNL4010::enableContinuousMeasurements(boolean enable) {
+  return write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITYPERIODIC);
+}
  
 
 /**************************************************************************/

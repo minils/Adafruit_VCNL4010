@@ -56,11 +56,15 @@ typedef enum
 #define VCNL4010_AMBIENTREADY 0x40
 #define VCNL4010_PROXIMITYREADY 0x20
 #define VCNL4010_MEASUREPROXIMITYPERIODIC 0x03
+#define VCNL4010_INT_PROX_READY_EN 0x08
   
 class Adafruit_VCNL4010 {
  public:
   Adafruit_VCNL4010();
   boolean begin(uint8_t a = VCNL4010_I2CADDR_DEFAULT);  
+  boolean enableDataReadyInterrupt(boolean enable);
+  boolean dataReadyInterruptEnabled(void);
+  boolean enableContinuousMeasurements(boolean enable);
 
   uint8_t getLEDcurrent(void);
   void setLEDcurrent(uint8_t c);
