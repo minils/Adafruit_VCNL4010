@@ -45,19 +45,46 @@ boolean Adafruit_VCNL4010::begin(uint8_t addr) {
 
 boolean Adafruit_VCNL4010::dataReadyInterruptEnabled(void) {
   uint8_t result = read8(VCNL4010_INTCONTROL);
-  return (result >> 3) & 0x01;
+  return result & VCNL4010_INT_PROX_READY_EN;
 }
 
 
-boolean Adafruit_VCNL4010::enableDataReadyInterrupt(boolean enable) {
-  if (dataReadyInterruptEnabled())
+void Adafruit_VCNL4010::enableDataReadyInterrupt(boolean enable) {
+  if (dataReadyInterruptEnabled() == enable)
     return;
+  uint8_t flag = read8(VCNL4010_INTCONTROL);
+  if (enable) {
+    write8(VCNL4010_INTCONTROL, flag | VCNL4010_INT_PROX_READY_EN);
+  } else {
+    write8(VCNL4010_INTCONTROL, flag & ~VCNL4010_INT_PROX_READY_EN);
+  }
 }
 
-boolean Adafruit_VCNL4010::enableContinuousMeasurements(boolean enable) {
-  return write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITYPERIODIC);
+boolean Adafruit_VCNL4010::continuousMeasurementsEnabled(void) {
+  uint8_t result = read8(VCNL4010_COMMAND);
+  return result & VCNL4010_MEASUREPROXIMITYPERIODIC;
 }
- 
+
+void Adafruit_VCNL4010::enableContinuousMeasurements(boolean enable) {
+  if (continuousMeasurementsEnabled() == enable) {
+    return;
+  }
+    if (enable) {
+    write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITYPERIODIC);
+  } else {
+    write8(VCNL4010_COMMAND, ~VCNL4010_MEASUREPROXIMITYPERIODIC);
+  }
+  uint8_t flag = read8(VCNL4010_COMMAND);
+  Serial.println(flag, HEX);
+}
+
+uint8_t Adafruit_VCNL4010::getCmdReg(void) {
+  return read8(VCNL4010_COMMAND);
+}
+
+uint8_t Adafruit_VCNL4010::getIntReg(void) {
+  return read8(VCNL4010_INTCONTROL);
+}
 
 /**************************************************************************/
 /*! 

@@ -61,10 +61,16 @@ typedef enum
 class Adafruit_VCNL4010 {
  public:
   Adafruit_VCNL4010();
-  boolean begin(uint8_t a = VCNL4010_I2CADDR_DEFAULT);  
-  boolean enableDataReadyInterrupt(boolean enable);
+  boolean begin(uint8_t a = VCNL4010_I2CADDR_DEFAULT); 
+ 
+  void enableDataReadyInterrupt(boolean enable);
   boolean dataReadyInterruptEnabled(void);
-  boolean enableContinuousMeasurements(boolean enable);
+
+  void enableContinuousMeasurements(boolean enable);
+  boolean continuousMeasurementsEnabled(void);
+
+  uint8_t getCmdReg(void);
+  uint8_t getIntReg(void);
 
   uint8_t getLEDcurrent(void);
   void setLEDcurrent(uint8_t c);
