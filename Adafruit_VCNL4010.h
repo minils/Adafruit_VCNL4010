@@ -56,7 +56,17 @@ typedef enum
 #define VCNL4010_AMBIENTREADY 0x40
 #define VCNL4010_PROXIMITYREADY 0x20
 #define VCNL4010_MEASUREPROXIMITYPERIODIC 0x03
-#define VCNL4010_INT_PROX_READY_EN 0x08
+#define VCNL4010_INT_PROX_READY 0x08
+
+// prox rates
+#define VCNL4010_PROXRATE2   0x00 // 1.95 measurements/s (DEFAULT)
+#define VCNL4010_PROXRATE4   0x01 // 3.90625 measurements/s
+#define VCNL4010_PROXRATE8   0x02 // 7.8125 measurements/s
+#define VCNL4010_PROXRATE16  0x03 // 16.625 measurements/s
+#define VCNL4010_PROXRATE32  0x04 // 31.25 measurements/s
+#define VCNL4010_PROXRATE64  0x05 // 62.5 measurements/s
+#define VCNL4010_PROXRATE128 0x06 // 125 measurements/s
+#define VCNL4010_PROXRATE256 0x07 // 250 measurements/s
   
 class Adafruit_VCNL4010 {
  public:
@@ -68,6 +78,10 @@ class Adafruit_VCNL4010 {
 
   void enableContinuousMeasurements(boolean enable);
   boolean continuousMeasurementsEnabled(void);
+
+  void setProxRate(uint8_t);
+
+  void readAllRegs();
 
   uint8_t getCmdReg(void);
   uint8_t getIntReg(void);

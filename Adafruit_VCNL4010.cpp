@@ -45,19 +45,18 @@ boolean Adafruit_VCNL4010::begin(uint8_t addr) {
 
 boolean Adafruit_VCNL4010::dataReadyInterruptEnabled(void) {
   uint8_t result = read8(VCNL4010_INTCONTROL);
-  return result & VCNL4010_INT_PROX_READY_EN;
+  return result & VCNL4010_INT_PROX_READY;
 }
 
 
 void Adafruit_VCNL4010::enableDataReadyInterrupt(boolean enable) {
-  if (dataReadyInterruptEnabled() == enable)
-    return;
   uint8_t flag = read8(VCNL4010_INTCONTROL);
   if (enable) {
-    write8(VCNL4010_INTCONTROL, flag | VCNL4010_INT_PROX_READY_EN);
+    write8(VCNL4010_INTCONTROL, flag | VCNL4010_INT_PROX_READY);
   } else {
-    write8(VCNL4010_INTCONTROL, flag & ~VCNL4010_INT_PROX_READY_EN);
+    write8(VCNL4010_INTCONTROL, flag & 0xF0);
   }
+  Serial.printf("DRDY en: %d\n", read8(VCNL4010_INTCONTROL));
 }
 
 boolean Adafruit_VCNL4010::continuousMeasurementsEnabled(void) {
@@ -66,16 +65,12 @@ boolean Adafruit_VCNL4010::continuousMeasurementsEnabled(void) {
 }
 
 void Adafruit_VCNL4010::enableContinuousMeasurements(boolean enable) {
-  if (continuousMeasurementsEnabled() == enable) {
-    return;
-  }
-    if (enable) {
+  if (enable) {
     write8(VCNL4010_COMMAND, VCNL4010_MEASUREPROXIMITYPERIODIC);
   } else {
-    write8(VCNL4010_COMMAND, ~VCNL4010_MEASUREPROXIMITYPERIODIC);
+    write8(VCNL4010_COMMAND, 0x00);
   }
-  uint8_t flag = read8(VCNL4010_COMMAND);
-  Serial.println(flag, HEX);
+  Serial.printf("Cont Meas. enabled: %d\n", read8(VCNL4010_COMMAND) & VCNL4010_MEASUREPROXIMITYPERIODIC);
 }
 
 uint8_t Adafruit_VCNL4010::getCmdReg(void) {
@@ -84,6 +79,34 @@ uint8_t Adafruit_VCNL4010::getCmdReg(void) {
 
 uint8_t Adafruit_VCNL4010::getIntReg(void) {
   return read8(VCNL4010_INTCONTROL);
+}
+
+void Adafruit_VCNL4010::readAllRegs(void) {
+  uint8_t result[15];
+  Serial.println(read8(VCNL4010_COMMAND), HEX);
+  Serial.println(read8(VCNL4010_PRODUCTID), HEX);
+  Serial.println(read8(VCNL4010_PROXRATE), HEX);
+  Serial.println(read8(VCNL4010_IRLED), HEX);
+  Serial.println(read8(VCNL4010_AMBIENTPARAMETER), HEX);
+  Serial.println(read8(VCNL4010_AMBIENTDATA), HEX);
+  Serial.println(read8(VCNL4010_AMBIENTDATA+1), HEX);
+  Serial.println(read8(VCNL4010_PROXIMITYDATA), HEX);
+  Serial.println(read8(VCNL4010_PROXIMITYDATA+1), HEX);
+  Serial.println(read8(VCNL4010_INTCONTROL), HEX);
+  Serial.println(read8(VCNL4010_PROXINITYADJUST), HEX);
+  Serial.println(read8(VCNL4010_PROXINITYADJUST+1), HEX);
+  Serial.println(read8(VCNL4010_HIGHTHRESHOLD_HB), HEX);
+  Serial.println(read8(VCNL4010_HIGHTHRESHOLD_LB), HEX);
+  Serial.println(read8(VCNL4010_INTSTAT), HEX);
+  Serial.println(read8(VCNL4010_MODTIMING), HEX);
+}
+
+void Adafruit_VCNL4010::setProxRate(uint8_t rate) {
+  if (rate > VCNL4010_PROXRATE256)
+    rate = VCNL4010_PROXRATE256;
+  Serial.println(rate);
+  write8(VCNL4010_PROXRATE, rate);
+  Serial.printf("Proxrate: %d\n", read8(VCNL4010_PROXRATE));
 }
 
 /**************************************************************************/
