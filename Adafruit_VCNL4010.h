@@ -81,8 +81,6 @@ class Adafruit_VCNL4010 {
 
   void setProxRate(uint8_t);
 
-  void readAllRegs();
-
   uint8_t getCmdReg(void);
   uint8_t getIntReg(void);
 
